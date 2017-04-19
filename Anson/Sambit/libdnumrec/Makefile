@@ -1,4 +1,4 @@
-CFLAGS = -Wno-deprecated -Wall -O 
+CFLAGS = -Wno-deprecated -Wall -O -Wno-write-strings
 SRC = dnumrecipes.cc dcomplex.cc
 OBJ = dnumrecipes.o dcomplex.o
 

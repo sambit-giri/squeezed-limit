@@ -31,7 +31,6 @@ const double Mmin = 2.e9; //In solar masses
 //Mmin is the minimum halo mass for star formation
 //Here we also assume that the large-scale volume is so large that sigma^2(long)
 //is much smaller than sigma^2(Mmin)
-
 double dxHI_ddelta(double Mmin, double z, Cosmology &cc)
 {
   double ans = 0.;
@@ -53,7 +52,7 @@ int main(int argc, char *argv[]) {
 
 
   Cosmology cc(om0,lam0,omb,hh,s8,ns,omNu);
-  double redshift = 9.164;
+  double redshift = 8.;
 
 
   cout << dxHI_ddelta(Mmin,redshift,cc) << endl;

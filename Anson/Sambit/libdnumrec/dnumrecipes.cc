@@ -3,9 +3,9 @@
 
 #include <math.h>
 #include <iostream>
-#include <stdio.h>
 #include <cstdlib>
-#include <string.h>
+#include <string>
+#include <cstring>
 #include "dnumrecipes.h"
 #include "dcomplex.h"
 
