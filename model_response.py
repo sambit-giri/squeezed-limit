@@ -12,7 +12,7 @@ rcParams['axes.labelsize']=14
 rcParams['font.size']=14 
 rcParams['axes.linewidth'] = 1.2
 
-c2t.set_sim_constants(500)
+c2t.set_sim_constants(500) 
 
 xfrac_dir = '/disk/dawn-1/garrelt/Reionization/C2Ray_WMAP7/500Mpc/500Mpc_f2_0_300/results/'
 dens_dir  = '/disk/dawn-1/garrelt/Reionization/C2Ray_WMAP7/500Mpc/coarser_densities/nc300/'

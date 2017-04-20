@@ -21,7 +21,7 @@ const double dcrit=1.68;
 
 
 //Minimum halo mass for star formation
-const double Mmin = 2.e9; //In solar masses
+const double Mmin = 1.e9; //In solar masses
 
 
 
@@ -36,11 +36,13 @@ double dxHI_ddelta(double Mmin, double z, Cosmology &cc)
   double ans = 0.;
   double dc = dcrit;
   double Smin = pow(cc.growthFac(z)*cc.sigma0fM(Mmin,ans,0),2.0);
+  double zeta = 0.02/0.995608;
 
   ans = -1.*exp(-1.0*dc*dc/2.0/Smin);
   ans *= sqrt(2.0/M_PI/Smin);
+  //ans = erf(sqrt(1.0*dc*dc/2.0/Smin));
  
-  return ans;
+  return zeta*ans;
 }
 
 
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]) {
 
 
   Cosmology cc(om0,lam0,omb,hh,s8,ns,omNu);
-  double redshift = 8.;
+  double redshift = 9.164;
 
 
   cout << dxHI_ddelta(Mmin,redshift,cc) << endl;
