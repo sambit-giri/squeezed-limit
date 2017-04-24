@@ -3,6 +3,7 @@ import c2raytools as c2t
 import squeezed_bispectrum
 import matplotlib.pyplot as plt
 import owntools
+import os
 
 from matplotlib import rcParams
 rcParams['font.family'] = 'sans-serif'
@@ -28,8 +29,8 @@ dens_zs = owntools.get_zs_list(dens_dir, file_type='/*n_all.dat')
 zs   = dens_zs[[np.abs(dens_zs-i).argmin() for i in zs_]]
 xvs  = ph_count_info[[np.abs(ph_count_info[:,0]-i).argmin() for i in zs],-2]
 
-i = 8
-z = zs[i]
+i = 9
+z = 8.636
 
 cube_21 = owntools.coeval_21cm(xfrac_dir, dens_dir, z, mean_subtract=True)
 cube_m  = owntools.coeval_overdens(dens_dir, z)
@@ -39,13 +40,34 @@ P_21, ks_x = c2t.power_spectrum_1d(cube_21, kbins=100, box_dims=c2t.conv.LB)
 f_dd, k_dd  = squeezed_bispectrum._integrated_bispectrum_normalized_cross(cube_m, cube_m, Ncuts=Ncuts)
 f_21d, k_xd = squeezed_bispectrum._integrated_bispectrum_normalized_cross(cube_21, cube_m, Ncuts=Ncuts)
 
+ks = k_dd.copy()
+
 ### Model
-zeta = 2
-dx_ddelta = -0.0145128*zeta     # Get from excursion set calculation
-xHI = 1. - xvs[i]
+zz, xv = 9.164, 0.02074
+command = '/disk/dawn-1/sgiri/squeezed-limit/Anson/Sambit/src/ESMR.x '+str(zz)+' '+str(xv)+' '+str(0)
+os.system(command)
+info = np.loadtxt('/disk/dawn-1/sgiri/squeezed-limit/Anson/Sambit/src/info.txt')
+os.remove('/disk/dawn-1/sgiri/squeezed-limit/Anson/Sambit/src/info.txt')
+plt.clf()
+zeta = 11.4; cc = 'g'
+df_ddelta = -0.0114685
+dx_ddelta = df_ddelta*zeta     # Get from excursion set calculation
+xHI = 1. - 0.02074
 A = 2*xHI*dx_ddelta + xHI**2*f_dd
-T_b_ = 23.88
-dP21_ddelta = T_b_**2*A*P_dd
-f_21d_ = dP21_ddelta/P_21
+T_b_ = 27.
+dP21_ddelta = T_b_**2*A #*P_dd
+f_21d_ = A.copy() #/P_21
+
+plt.semilogx(ks, f_dd, c='k', label='$f_{\delta \delta}$')
+plt.semilogx(ks, f_21d, c='b', label='$f_{21 \delta}$')
+plt.semilogx(ks, f_21d_, '--', c=cc, label='$f_{21 \delta, model}$($\zeta$='+str(zeta)+')')
+plt.legend(loc=0)
+plt.xlim(0.02,1.)
+plt.ylim(-6.5,6.5)
+plt.show()
+
+
+
+
 
 

@@ -3,15 +3,17 @@
 #include <fstream>
 #include <math.h>
 #include <dnumrecipes.h>
-
+#include <string.h>
+#include <stdlib.h>
+#include <fstream>
 
 
 //Cosmology         
-const double om0 = 0.28;
-const double lam0=0.72;
-const double omb = 0.046;
-const double hh = 0.7;
-const double s8 = 0.817;
+const double om0 = 0.27;
+const double lam0=0.73;
+const double omb = 0.044;
+const double hh = 0.701;
+const double s8 = 0.8;
 const double ns = 0.96;
 const double omNu = 0.0;
 
@@ -21,7 +23,7 @@ const double dcrit=1.68;
 
 
 //Minimum halo mass for star formation
-const double Mmin = 1.e9; //In solar masses
+const double Mmin = 2.e9; //In solar masses
 
 
 
@@ -36,15 +38,22 @@ double dxHI_ddelta(double Mmin, double z, Cosmology &cc)
   double ans = 0.;
   double dc = dcrit;
   double Smin = pow(cc.growthFac(z)*cc.sigma0fM(Mmin,ans,0),2.0);
-  double zeta = 0.02/0.995608;
 
-  ans = -1.*exp(-1.0*dc*dc/2.0/Smin);
-  ans *= sqrt(2.0/M_PI/Smin);
-  //ans = erf(sqrt(1.0*dc*dc/2.0/Smin));
+  ans = -1.*exp(-1.0*dc*dc/2.0/Smin)*sqrt(2.0/M_PI/Smin);
  
-  return zeta*ans;
+  return ans;
 }
 
+double zeta(double Mmin, double z, Cosmology &cc)
+{
+  double ans = 0.;
+  double dc = dcrit;
+  double Smin = pow(cc.growthFac(z)*cc.sigma0fM(Mmin,ans,0),2.0);
+
+  ans = 1.0/erfc(sqrt(1.0*dc*dc/2.0/Smin));
+ 
+  return ans;
+}
 
 
 
@@ -52,12 +61,21 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-
   Cosmology cc(om0,lam0,omb,hh,s8,ns,omNu);
-  double redshift = 9.164;
+  double redshift = 9.164, xfrac = 0.02074;
 
-
+  if (argc>=3) {
+     redshift = atof(argv[1]);
+     xfrac    = atof(argv[2]);
+  }
   cout << dxHI_ddelta(Mmin,redshift,cc) << endl;
+  cout << xfrac*zeta(Mmin,redshift,cc) << endl;
+
+  ofstream myfile;
+  myfile.open ("info.txt");
+  myfile << dxHI_ddelta(Mmin,redshift,cc) << endl;
+  myfile << xfrac*zeta(Mmin,redshift,cc) << endl;
+  myfile.close();
 
   return 0;
 
