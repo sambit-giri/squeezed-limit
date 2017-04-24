@@ -44,10 +44,10 @@ ks = k_dd.copy()
 
 ### Model
 zz, xv = 9.164, 0.02074
-command = '/disk/dawn-1/sgiri/squeezed-limit/Anson/Sambit/src/ESMR.x '+str(zz)+' '+str(xv)+' '+str(0)
+command = './Anson/Sambit/src/ESMR.x '+str(zz)+' '+str(xv)+' info.txt'
 os.system(command)
-info = np.loadtxt('/disk/dawn-1/sgiri/squeezed-limit/Anson/Sambit/src/info.txt')
-os.remove('/disk/dawn-1/sgiri/squeezed-limit/Anson/Sambit/src/info.txt')
+info = np.loadtxt('./info.txt')
+os.remove('./info.txt')
 plt.clf()
 zeta = 11.4; cc = 'g'
 df_ddelta = -0.0114685
