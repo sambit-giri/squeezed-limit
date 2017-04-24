@@ -49,10 +49,11 @@ os.system(command)
 info = np.loadtxt('./info.txt')
 os.remove('./info.txt')
 plt.clf()
-zeta = 11.4; cc = 'g'
-df_ddelta = -0.0114685
+#zeta = info[1]; cc = 'g'
+zeta = 50
+df_ddelta = info[0]
 dx_ddelta = df_ddelta*zeta     # Get from excursion set calculation
-xHI = 1. - 0.02074
+xHI = 1. - xv
 A = 2*xHI*dx_ddelta + xHI**2*f_dd
 T_b_ = 27.
 dP21_ddelta = T_b_**2*A #*P_dd

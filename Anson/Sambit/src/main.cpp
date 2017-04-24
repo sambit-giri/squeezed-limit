@@ -23,7 +23,7 @@ const double dcrit=1.68;
 
 
 //Minimum halo mass for star formation
-const double Mmin = 2.e9; //In solar masses
+const double Mmin = 0.8e9; //In solar masses
 
 
 
@@ -44,13 +44,14 @@ double dxHI_ddelta(double Mmin, double z, Cosmology &cc)
   return ans;
 }
 
-double zeta(double Mmin, double z, Cosmology &cc)
+
+double fcollapse(double Mmin, double z, Cosmology &cc)
 {
   double ans = 0.;
   double dc = dcrit;
   double Smin = pow(cc.growthFac(z)*cc.sigma0fM(Mmin,ans,0),2.0);
 
-  ans = 1.0/erfc(sqrt(1.0*dc*dc/2.0/Smin));
+  ans = erfc(sqrt(1.0*dc*dc/2.0/Smin));
  
   return ans;
 }
@@ -69,12 +70,14 @@ int main(int argc, char *argv[]) {
      xfrac    = atof(argv[2]);
   }
   cout << dxHI_ddelta(Mmin,redshift,cc) << endl;
-  cout << xfrac*zeta(Mmin,redshift,cc) << endl;
+  cout << xfrac/fcollapse(Mmin,redshift,cc) << endl;
+  cout << fcollapse(Mmin,redshift,cc) << endl;
+  cout << xfrac/0.0052 << endl;
 
   ofstream myfile;
   myfile.open ("info.txt");
   myfile << dxHI_ddelta(Mmin,redshift,cc) << endl;
-  myfile << xfrac*zeta(Mmin,redshift,cc) << endl;
+  myfile << xfrac/fcollapse(Mmin,redshift,cc) << endl;
   myfile.close();
 
   return 0;
