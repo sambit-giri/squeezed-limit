@@ -83,6 +83,33 @@ def _integrated_bispectrum_normalized_cross(cube, cube2, Ncuts=4, kbins=100):
 	sig2 = sig2/n_box
 	return B_k/P_k/sig2, ks
 
+def _integrated_bispectrum_normalized_cross1(cube, cube2, Ncuts=4):
+	#assert statistic in ['mean']
+	assert cube.shape == cube2.shape
+	assert cube.shape[0]%Ncuts==0 and cube.shape[1]%Ncuts==0 and cube.shape[2]%Ncuts==0
+	Lx,Ly,Lz = cube.shape[0]/Ncuts,cube.shape[1]/Ncuts,cube.shape[2]/Ncuts
+	rLs = [[Lx/2.+i*Lx,Ly/2.+j*Ly,Lz/2.+k*Lz] for i in xrange(Ncuts) for j in xrange(Ncuts) for k in xrange(Ncuts)]
+	B_ = 0
+	P_ = 0
+	sig2  = 0
+	n_box = Ncuts**3
+	V_L   = (Lx*Ly*Lz)
+	for i in xrange(n_box):
+		w  = W_L(cube, rLs[i], [Lx,Ly,Lz])
+		w2 = W_L(cube2, rLs[i], [Lx,Ly,Lz])
+		c  = cube  * w
+		c2 = cube2 * w2
+		x_mean = c.sum(dtype=np.float64)/V_L
+		d_mean = c2.sum(dtype=np.float64)/V_L
+		B_ += x_mean*d_mean
+		P_ += x_mean
+		sig2  += (d_mean)**2   #c2.var(dtype=np.float64)
+		print 100*(i+1)/n_box, "%"
+	B_ = B_/n_box
+	P_ = P_/n_box
+	sig2 = sig2/n_box
+	return B_/P_/sig2
+
 def _integrated_bispectrum_cross(cube, cube2, Ncuts=4, kbins=100):
 	#assert statistic in ['mean']
 	assert cube.shape == cube2.shape

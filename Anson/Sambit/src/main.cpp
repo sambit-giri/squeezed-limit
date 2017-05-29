@@ -23,7 +23,7 @@ const double dcrit=1.68;
 
 
 //Minimum halo mass for star formation
-const double Mmin = 0.8e9; //In solar masses
+const double Mmin = 2.0e9; //In solar masses
 
 
 
@@ -63,7 +63,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 
   Cosmology cc(om0,lam0,omb,hh,s8,ns,omNu);
-  double redshift = 9.164, xfrac = 0.02074;
+  double redshift = 9.026, xfrac = 0.02;
 
   if (argc>=3) {
      redshift = atof(argv[1]);
@@ -72,12 +72,13 @@ int main(int argc, char *argv[]) {
   cout << dxHI_ddelta(Mmin,redshift,cc) << endl;
   cout << xfrac/fcollapse(Mmin,redshift,cc) << endl;
   cout << fcollapse(Mmin,redshift,cc) << endl;
-  cout << xfrac/0.0052 << endl;
+  //cout << xfrac/0.0052 << endl;
 
   ofstream myfile;
   myfile.open ("info.txt");
   myfile << dxHI_ddelta(Mmin,redshift,cc) << endl;
   myfile << xfrac/fcollapse(Mmin,redshift,cc) << endl;
+  myfile << fcollapse(Mmin,redshift,cc) << endl;
   myfile.close();
 
   return 0;

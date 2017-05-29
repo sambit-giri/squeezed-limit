@@ -15,13 +15,10 @@ rcParams['axes.linewidth'] = 1.2
 
 c2t.set_sim_constants(500) 
 
-parent_dir = '/disk/dawn-1/garrelt/Reionization/C2Ray_WMAP7/500Mpc/'
 xfrac_dir  = '/disk/dawn-1/garrelt/Reionization/C2Ray_WMAP7/500Mpc/500Mpc_f2_0_300/results/'
-dens_dir   = '/disk/dawn-1/garrelt/Reionization/C2Ray_WMAP7/500Mpc/coarser_densities/nc300/'
+grizzly_dir = '/disk/dawn-1/gragh/sambit_bs/outputs/'
+dens_dir    = '/disk/dawn-1/garrelt/Reionization/C2Ray_WMAP7/500Mpc/coarser_densities/nc600/'
 ph_count_info = owntools.photoncount_info(xfrac_dir)
-
-def(mass_grid):
-	return mass_grid*c2t.conv.M_grid*c2t.const.solar_masses_per_gram
 
 Ncuts = 3
 
@@ -33,13 +30,14 @@ dens_zs = owntools.get_zs_list(dens_dir, file_type='/*n_all.dat')
 zs   = dens_zs[[np.abs(dens_zs-i).argmin() for i in zs_]]
 xvs  = ph_count_info[[np.abs(ph_count_info[:,0]-i).argmin() for i in zs],-2]
 
-i = 9
-z = 6.549
+z = 9.026 #8.636
 
-cube_21 = owntools.coeval_21cm(xfrac_dir, dens_dir, z, mean_subtract=True)
-cube_m  = owntools.coeval_overdens(dens_dir, z)
-cube_d = owntools.coeval_dens(dens_dir, z)
-cube_x = owntools.coeval_xfrac(xfrac_dir, z)
+gg_xf = c2t.XfracFile(grizzly_dir+str(z)+'xhiifrac.dat').xi
+#cc_xf = owntools.coeval_xfrac(xfrac_dir, z)
+
+cube_d  = owntools.coeval_dens(dens_dir, z)
+cube_21 = c2t.calc_dt(gg_xf, cube_d, z); cube_21 -= cube_21.mean()
+cube_m  = cube_d/cube_d.mean(dtype=np.float64) - 1. #owntools.coeval_overdens(dens_dir, z)
 
 P_dd, ks_m = c2t.power_spectrum_1d(cube_m, kbins=100, box_dims=c2t.conv.LB)
 P_21, ks_x = c2t.power_spectrum_1d(cube_21, kbins=100, box_dims=c2t.conv.LB)
@@ -66,9 +64,10 @@ xm_sim = ph_count_info[:,-1]
 xv_sim = ph_count_info[:,-2]
 
 ### Model
-zz = 9.164#6.549#
+zz = 9.026 #8.636
 xm = xm_sim[zs_sim==zz][0]
-command = './Anson/Sambit/src/ESMR.x '+str(z)+' '+str(xv)+' info.txt'
+xv = gg_xf.mean()
+command = './Anson/Sambit/src/ESMR.x '+str(zz)+' '+str(xv)+' info.txt'
 os.system(command)
 info = np.loadtxt('./info.txt')
 os.remove('./info.txt')
@@ -89,7 +88,7 @@ plt.semilogx(ks, f_21d, c='b', label='$f_{21 \delta}$')
 plt.semilogx(ks, f_21d_, '--', c=cc, label='$f_{21 \delta, model}$($\zeta$='+str(zeta)+')')
 plt.legend(loc=0)
 plt.xlim(0.02,1.)
-plt.ylim(-6.5,6.5)
+plt.ylim(-2.5,6.0)
 plt.xlabel('k (Mpc$^{-1}$)')
 plt.ylabel('f')
 plt.show()
