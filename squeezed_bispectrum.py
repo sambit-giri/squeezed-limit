@@ -56,7 +56,7 @@ def integrated_bispectrum_normalized_cross(cube, cube2, Ncuts=4, statistic='mean
 	sig2 = sig2/Ncuts**3
 	return B_k/P_k/sig2, ks
 
-def _integrated_bispectrum_normalized_cross(cube, cube2, Ncuts=4, kbins=100):
+def _integrated_bispectrum_normalized_cross(cube, cube2, Ncuts=4, kbins=20, box_dims=None):
 	#assert statistic in ['mean']
 	assert cube.shape == cube2.shape
 	assert cube.shape[0]%Ncuts==0 and cube.shape[1]%Ncuts==0 and cube.shape[2]%Ncuts==0
@@ -72,7 +72,7 @@ def _integrated_bispectrum_normalized_cross(cube, cube2, Ncuts=4, kbins=100):
 		w2 = W_L(cube2, rLs[i], [Lx,Ly,Lz])
 		c  = cube  * w
 		c2 = cube2 * w2
-		pk, ks = c2t.power_spectrum_1d(c, kbins=kbins)
+		pk, ks = c2t.power_spectrum_1d(c, kbins=kbins, box_dims=box_dims)
 		d_mean = c2.sum(dtype=np.float64)/V_L
 		B_k   += pk*d_mean
 		P_k   += pk
